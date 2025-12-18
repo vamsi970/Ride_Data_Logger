@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ride Data Logger</title>
+    <style>
+
+        @font-face {
+            font-family: "HCLTech Roobert";
+            src: url("/fonts/HCLTechRoobert-ExtraBold.ttf");
+        }
+
+        * {
+            
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "HCLTech Roobert";
+        }
+
+        body {
+            background: #1a1a1a;
+            color: #fff;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .app-logo {
+            color: white;
+        }
+
+        .page-title {
+            margin: 0 auto;
+            color: #ff3333;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+
+        .header h1 {
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .form-section {
+            background: #2a2a2a;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            background: #1a1a1a;
+            border: 1px solid #444;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .input-group input::placeholder {
+            color: #666;
+        }
+
+        .category-section {
+            margin-bottom: 20px;
+        }
+
+        .category-header {
+            color: #ff3333;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .condition-btn {
+            background: #00cc66;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            margin: 5px 5px 5px 0;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+
+        .condition-btn:hover {
+            background: #00e673;
+        }
+
+        .condition-btn.inactive {
+            background: #333;
+            color: #666;
+        }
+
+        .condition-wrapper {
+            display: inline-block;
+            margin: 5px 5px 5px 0;
+            position: relative;
+        }
+
+        .time-display {
+            display: inline-block;
+            color: #999;
+            font-size: 11px;
+            margin-left: 5px;
+            vertical-align: middle;
+        }
+
+        .comment-box {
+            width: 100%;
+            padding: 12px;
+            background: #1a1a1a;
+            border: 1px solid #444;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 14px;
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .comment-box::placeholder {
+            color: #666;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .btn-reset {
+            background: #ff9900;
+            color: #fff;
+        }
+
+        .btn-reset:hover {
+            background: #ffaa00;
+        }
+
+        .btn-stop {
+            background: #ff3333;
+            color: #fff;
+        }
+
+        .btn-stop:hover {
+            background: #ff4444;
+        }
+
+        .btn-export {
+            background: #0099ff;
+            color: #fff;
+        }
+
+        .btn-export:hover {
+            background: #00aaff;
+        }
+
+        .btn-reset-all {
+            background: #cc0000;
+            color: #fff;
+            flex: 1 1 100%;
+        }
+
+        .btn-reset-all:hover {
+            background: #dd0000;
+        }
+
+        .saved-sessions {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .saved-sessions h3 {
+            color: #00cc66;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .session-item {
+            background: #1a1a1a;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .session-item-info {
+            flex: 1;
+        }
+
+        .session-item-title {
+            color: #fff;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .session-item-details {
+            color: #999;
+            font-size: 12px;
+            margin-top: 3px;
+        }
+
+        .session-item-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .btn-small {
+            padding: 5px 10px;
+            font-size: 11px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .btn-delete {
+            background: #ff3333;
+            color: #fff;
+        }
+
+        .no-sessions {
+            color: #666;
+            font-style: italic;
+            font-size: 13px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #444;
+        }
+
+        .nav-tab {
+            padding: 12px 24px;
+            background: transparent;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .nav-tab.active {
+            color: #00cc66;
+            border-bottom-color: #00cc66;
+        }
+
+        .nav-tab:hover {
+            color: #00cc66;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .task-checkbox {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .select-all-container {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #1a1a1a;
+            border-radius: 5px;
+        }
+
+        .select-all-container label {
+            display: flex;
+            align-items: center;
+            color: #00cc66;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .export-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .calendar-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .calendar-input-wrapper input[type="date"] {
+            padding-right: 35px;
+        }
+
+        .calendar-icon {
+            position: absolute;
+            right: 10px;
+            pointer-events: none;
+            color: #00cc66;
+            font-size: 18px;
+        }
+
+        .session-info {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        .session-info span {
+            color: #00cc66;
+            font-weight: bold;
+        }
+
+        .alert {
+            background: #ff9900;
+            color: #000;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+        <div class="header-inner">
+            <h1 class="app-logo">HCLTech</h1>
+        <h1 class="page-title">Ride Data Logger</h1>
+    </div>
+</div>
+
+
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="switchTab('logger')">📝 Logger</button>
+            <button class="nav-tab" onclick="switchTab('tasks')">📋 Saved Tasks</button>
+        </div>
+
+        <!-- Logger Page -->
+        <div id="loggerPage" class="page active">
+            <div class="form-section">
+                <div class="input-group">
+                    <input type="text" id="driver" placeholder="Driver" required>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="annotator" placeholder="Annotator" required>
+                </div>
+                <div class="input-group calendar-input-wrapper">
+                    <input type="date" id="date" required>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="vehicle" placeholder="Vehicle" required>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="rsuNo" placeholder="R S U No" required>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="rsuStartDate" placeholder="R S U Start Date" required>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="driveId" placeholder="Drive Id" required>
+                </div>
+            </div>
+
+            <div id="sessionInfo" class="session-info" style="display: none;">
+                Session Active - Duration: <span id="sessionDuration">0:00</span>
+            </div>
+
+        <div class="category-section">
+            <div class="category-header">Weather</div>
+            <div class="condition-wrapper">
+                <button class="condition-btn inactive" data-category="Weather" data-condition="Sunny">Sunny</button>
+                <span class="time-display" data-timer="Weather:Sunny">0:00</span>
+            </div>
+            <div class="condition-wrapper">
+                <button class="condition-btn inactive" data-category="Weather" data-condition="Low Sun">Low Sun</button>
+                <span class="time-display" data-timer="Weather:Low Sun">0:00</span>
+            </div>
+            <div class="condition-wrapper">
+                <button class="condition-btn inactive" data-category="Weather" data-condition="Cloudy">Cloudy</button>
+                <span class="time-display" data-timer="Weather:Cloudy">0:00</span>
+            </div>
+            <div class="condition-wrapper">
+                <button class="condition-btn inactive" data-category="Weather" data-condition="Rain">Rain</button>
+                <span class="time-display" data-timer="Weather:Rain">0:00</span>
+            </div>
+            <div class="condition-wrapper">
+                <button class="condition-btn inactive" data-category="Weather" data-condition="Fog">Fog</button>
+                <span class="time-display" data-timer="Weather:Fog">0:00</span>
+            </div>
+            <div class="condition-wrapper">
+                <button class="condition-btn inactive" data-category="Weather" data-condition="Snow">Snow</button>
+                <span class="time-display" data-timer="Weather:Snow">0:00</span>
+            </div>
+        </div>
+
+        <div class="category-section">
+            <div class="category-header">Road Type</div>
+            <div class="condition-wrapper">
+                <button class="condition-btn inactive" data-category="Road Type" data-condition="City">City</button>
+                <span class="time-display" data-timer="Road Type:City">0:00</span>
+            </div>
+            <div class="condition-wrapper">
+                <button class="condition-btn inactive" data-category="Road Type" data-condition="Country">Country</button>
+                <span class="time-display" data-timer="Road Type:Country">0:00</span>
+            </div>
+            <div class="condition-wrapper">
+                <button class="condition-btn inactive" data-category="Road Type" data-condition="Highway">Highway</button>
+                <span class="time-display" data-timer="Road Type:Highway">0:00</span>
+            </div>
+            <div class="condition-wrapper">
+                <button class="condition-btn inactive" data-category="Road Type" data-condition="Construction Site">Construction Site</button>
+                <span class="time-display" data-timer="Road Type:Construction Site">0:00</span>
+            </div>
+            <div class="condition-wrapper">
+                <button class="condition-btn inactive" data-category="Road Type" data-condition="Tunnel">Tunnel</button>
+                <span class="time-display" data-timer="Road Type:Tunnel">0:00</span>
+            </div>
+        </div>
+
+        <div class="category-section">
+            <div class="category-header">Lighting</div>
+            <div class="condition-wrapper">
+                <button class="condition-btn inactive" data-category="Lighting" data-condition="Day">Day</button>
+                <span class="time-display" data-timer="Lighting:Day">0:00</span>
+            </div>
+            <div class="condition-wrapper">
+                <button class="condition-btn inactive" data-category="Lighting" data-condition="Dawn">Dawn</button>
+                <span class="time-display" data-timer="Lighting:Dawn">0:00</span>
+            </div>
+            <div class="condition-wrapper">
+                <button class="condition-btn inactive" data-category="Lighting" data-condition="Lit Night">Lit Night</button>
+                <span class="time-display" data-timer="Lighting:Lit Night">0:00</span>
+            </div>
+            <div class="condition-wrapper">
+                <button class="condition-btn inactive" data-category="Lighting" data-condition="Dark Night">Dark Night</button>
+                <span class="time-display" data-timer="Lighting:Dark Night">0:00</span>
+            </div>
+        </div>
+
+        <div class="category-section">
+            <div class="category-header">Traffic</div>
+            <div class="condition-wrapper">
+                <button class="condition-btn inactive" data-category="Traffic" data-condition="Flow">Flow</button>
+                <span class="time-display" data-timer="Traffic:Flow">0:00</span>
+            </div>
+            <div class="condition-wrapper">
+                <button class="condition-btn inactive" data-category="Traffic" data-condition="Jam">Jam</button>
+                <span class="time-display" data-timer="Traffic:Jam">0:00</span>
+            </div>
+        </div>
+
+        <div class="category-section">
+            <div class="category-header">Speed</div>
+            <div class="condition-wrapper">
+                <button class="condition-btn inactive" data-category="Speed" data-condition="0-2 mph">0-2 mph</button>
+                <span class="time-display" data-timer="Speed:0-2 mph">0:00</span>
+            </div>
+            <div class="condition-wrapper">
+                <button class="condition-btn inactive" data-category="Speed" data-condition="3-18 mph">3-18 mph</button>
+                <span class="time-display" data-timer="Speed:3-18 mph">0:00</span>
+            </div>
+            <div class="condition-wrapper">
+                <button class="condition-btn inactive" data-category="Speed" data-condition="19-37 mph">19-37 mph</button>
+                <span class="time-display" data-timer="Speed:19-37 mph">0:00</span>
+            </div>
+            <div class="condition-wrapper">
+                <button class="condition-btn inactive" data-category="Speed" data-condition="38-55 mph">38-55 mph</button>
+                <span class="time-display" data-timer="Speed:38-55 mph">0:00</span>
+            </div>
+            <div class="condition-wrapper">
+                <button class="condition-btn inactive" data-category="Speed" data-condition="56-80 mph">56-80 mph</button>
+                <span class="time-display" data-timer="Speed:56-80 mph">0:00</span>
+            </div>
+            <div class="condition-wrapper">
+                <button class="condition-btn inactive" data-category="Speed" data-condition="81-135 mph">81-135 mph</button>
+                <span class="time-display" data-timer="Speed:81-135 mph">0:00</span>
+            </div>
+        </div>
+
+        <div class="category-section">
+            <div class="category-header">Comment</div>
+            <textarea id="comment" class="comment-box" placeholder="Enter comments here..."></textarea>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn btn-stop" onclick="saveCurrentTask()">💾 Save Task</button>
+            <button class="btn btn-reset" onclick="resetCategory('Weather')">Reset Weather</button>
+            <button class="btn btn-reset" onclick="resetCategory('Road Type')">Reset Road Type</button>
+            <button class="btn btn-reset" onclick="resetCategory('Lighting')">Reset Lighting</button>
+            <button class="btn btn-reset" onclick="resetCategory('Traffic')">Reset Traffic</button>
+            <button class="btn btn-reset" onclick="resetCategory('Speed')">Reset Speed</button>
+            <button class="btn btn-stop" onclick="stopSession()">🛑 Stop Session</button>
+            <button class="btn btn-export" onclick="exportCSV()">📄 Export CSV</button>
+            <button class="btn btn-export" onclick="exportJSON()">📋 Export JSON</button>
+            <button class="btn btn-export" onclick="emailReport()">📧 Email Report</button>
+            <button class="btn btn-reset-all" onclick="resetAll()">🔄 Reset Everything</button>
+        </div>
+        </div>
+
+        <!-- Saved Tasks Page -->
+        <div id="tasksPage" class="page">
+            <div class="saved-sessions">
+                <h3>📋 Saved Tasks (<span id="taskCountPage">0</span>)</h3>
+                
+                <div class="select-all-container" id="selectAllContainer" style="display: none;">
+                    <label>
+                        <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll()">
+                        <span style="margin-left: 8px;">Select All Tasks</span>
+                    </label>
+                </div>
+
+                <div id="savedTasksPageList"></div>
+
+                <div class="export-actions" id="exportActionsContainer" style="display: none;">
+                    <button class="btn btn-export" onclick="exportSelectedTasks('csv')">📄 Export Selected (CSV)</button>
+                    <button class="btn btn-export" onclick="exportSelectedTasks('json')">📋 Export Selected (JSON)</button>
+                    <button class="btn btn-export" onclick="exportSelectedTasks('email')">📧 Email Selected</button>
+                </div>
+
+                <div class="no-sessions" id="noTasksMessage">No saved tasks yet. Start logging to create tasks!</div>
+            </div>
+        </div>
+    </div>
+    <script>
+        
+        let sessionStartTime = null;
+        let sessionActive = false;
+        let activeConditions = {};
+        let conditionTimers = {};
+        let sessionDurationInterval = null;
+        let displayUpdateInterval = null;
+        let savedTasks = []; // Store multiple tasks
+        let taskCounter = 1; // Task numbering
+
+        // Set current date
+        document.getElementById('date').valueAsDate = new Date();
+
+        // Load saved tasks from browser storage on page load
+        loadSavedTasks();
+
+        // Update all timer displays every second
+        function updateAllTimerDisplays() {
+            Object.keys(conditionTimers).forEach(key => {
+                const timer = conditionTimers[key];
+                let totalSeconds = timer.totalSeconds;
+                
+                // If currently active, add elapsed time since start
+                if (timer.startTime) {
+                    const now = new Date();
+                    const elapsed = Math.floor((now - timer.startTime) / 1000);
+                    totalSeconds += elapsed;
+                }
+                
+                // Update display
+                const displayElement = document.querySelector(`[data-timer="${key}"]`);
+                if (displayElement) {
+                    displayElement.textContent = formatTime(totalSeconds);
+                }
+            });
+        }
+
+        // Start updating displays
+        displayUpdateInterval = setInterval(updateAllTimerDisplays, 1000);
+
+        // Tab switching
+        function switchTab(tab) {
+            // Update tab buttons
+            document.querySelectorAll('.nav-tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Update pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+
+            if (tab === 'logger') {
+                document.getElementById('loggerPage').classList.add('active');
+            } else if (tab === 'tasks') {
+                document.getElementById('tasksPage').classList.add('active');
+                updateTasksPage();
+            }
+        }
+
+        // Load saved tasks from localStorage
+        function loadSavedTasks() {
+            try {
+                const stored = localStorage.getItem('rideTasks');
+                if (stored) {
+                    savedTasks = JSON.parse(stored);
+                    taskCounter = savedTasks.length + 1;
+                    updateSavedTasksDisplay();
+                }
+            } catch (e) {
+                console.error('Error loading tasks:', e);
+            }
+        }
+
+        // Save tasks to localStorage
+        function saveTasks() {
+            try {
+                localStorage.setItem('rideTasks', JSON.stringify(savedTasks));
+            } catch (e) {
+                console.error('Error saving tasks:', e);
+                alert('Error saving tasks to storage!');
+            }
+        }
+
+        // Update the saved tasks display
+        function updateSavedTasksDisplay() {
+            const container = document.getElementById('savedSessionsContainer');
+            const list = document.getElementById('savedSessionsList');
+            const countSpan = document.getElementById('taskCount');
+            
+            if (savedTasks.length === 0) {
+                container.style.display = 'none';
+                return;
+            }
+            
+            container.style.display = 'block';
+            countSpan.textContent = savedTasks.length;
+            
+            list.innerHTML = savedTasks.map((task, index) => `
+                <div class="session-item">
+                    <div class="session-item-info">
+                        <div class="session-item-title">Task ${index + 1}: ${task.driver || 'N/A'}</div>
+                        <div class="session-item-details">${task.date} | Duration: ${task.sessionDuration}</div>
+                    </div>
+                    <div class="session-item-actions">
+                        <button class="btn-small btn-delete" onclick="deleteTask(${index})">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Update tasks page with checkboxes
+        function updateTasksPage() {
+            const countSpan = document.getElementById('taskCountPage');
+            const list = document.getElementById('savedTasksPageList');
+            const noTasksMsg = document.getElementById('noTasksMessage');
+            const selectAllContainer = document.getElementById('selectAllContainer');
+            const exportActionsContainer = document.getElementById('exportActionsContainer');
+            
+            countSpan.textContent = savedTasks.length;
+            
+            if (savedTasks.length === 0) {
+                noTasksMsg.style.display = 'block';
+                list.innerHTML = '';
+                selectAllContainer.style.display = 'none';
+                exportActionsContainer.style.display = 'none';
+                return;
+            }
+            
+            noTasksMsg.style.display = 'none';
+            selectAllContainer.style.display = 'block';
+            exportActionsContainer.style.display = 'flex';
+            
+            list.innerHTML = savedTasks.map((task, index) => `
+                <div class="session-item">
+                    <input type="checkbox" class="task-checkbox" id="task-${index}" onchange="updateExportButtons()">
+                    <div class="session-item-info">
+                        <div class="session-item-title">Task ${index + 1}: ${task.driver || 'N/A'}</div>
+                        <div class="session-item-details">${task.date} | Duration: ${task.sessionDuration} | ${task.conditions.length} conditions</div>
+                    </div>
+                    <div class="session-item-actions">
+                        <button class="btn-small btn-export" onclick="exportSingleTask(${index}, 'csv')">CSV</button>
+                        <button class="btn-small btn-export" onclick="exportSingleTask(${index}, 'json')">JSON</button>
+                        <button class="btn-small btn-delete" onclick="deleteTask(${index})">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Toggle select all checkboxes
+        function toggleSelectAll() {
+            const selectAll = document.getElementById('selectAllCheckbox').checked;
+            document.querySelectorAll('.task-checkbox').forEach(cb => {
+                cb.checked = selectAll;
+            });
+            updateExportButtons();
+        }
+
+        // Update export button states
+        function updateExportButtons() {
+            const anyChecked = document.querySelectorAll('.task-checkbox:checked').length > 0;
+            document.getElementById('exportActionsContainer').style.opacity = anyChecked ? '1' : '0.5';
+        }
+
+        // Save current session as a task
+        function saveCurrentTask() {
+            const data = prepareExportData(false);
+            if (!data) return;
+            
+            // Add task to saved tasks
+            savedTasks.push(data);
+            saveTasks();
+            updateSavedTasksDisplay();
+            
+            alert(`Task ${savedTasks.length} saved successfully! You can start a new recording.`);
+            
+            // Reset session but keep user info
+            resetSessionOnly();
+        }
+
+        // Delete a saved task
+        function deleteTask(index) {
+            if (confirm(`Delete Task ${index + 1}?`)) {
+                savedTasks.splice(index, 1);
+                saveTasks();
+                updateSavedTasksDisplay();
+                updateTasksPage();
+            }
+        }
+
+        // Export single task
+        function exportSingleTask(index, format) {
+            const task = savedTasks[index];
+            if (!task) return;
+
+            if (format === 'csv') {
+                let csv = 'Ride Data Logger Report\n';
+                csv += `Driver,${task.driver}\n`;
+                csv += `Annotator,${task.annotator}\n`;
+                csv += `Date,${task.date}\n`;
+                csv += `Vehicle,${task.vehicle}\n`;
+                csv += `RSUNo,${task.rsuNo}\n`;
+                csv += `RSUStartDate,${task.rsuStartDate}\n`;
+                csv += `DriveId,${task.driveId}\n`;
+                csv += `Session Start,${task.sessionStart}\n`;
+                csv += `Session End,${task.sessionEnd}\n`;
+                csv += `Session Duration,${task.sessionDuration}\n`;
+                csv += 'Category,Condition,Minutes\n';
+                
+                task.conditions.forEach(item => {
+                    csv += `${item.category},${item.condition},${item.time}\n`;
+                });
+                
+                if (task.comment) {
+                    csv += `Comment,${task.comment}\n`;
+                }
+                
+                downloadFile(csv, `task-${index + 1}-${Date.now()}.csv`, 'text/csv');
+            } else if (format === 'json') {
+                const jsonData = {
+                    report: "Ride Data Logger Report",
+                    taskNumber: index + 1,
+                    metadata: {
+                        driver: task.driver,
+                        annotator: task.annotator,
+                        date: task.date,
+                        vehicle: task.vehicle,
+                        rsuNo: task.rsuNo,
+                        rsuStartDate: task.rsuStartDate,
+                        driveId: task.driveId
+                    },
+                    session: {
+                        start: task.sessionStart,
+                        end: task.sessionEnd,
+                        duration: task.sessionDuration
+                    },
+                    conditions: task.conditions,
+                    comment: task.comment || ""
+                };
+                
+                downloadFile(JSON.stringify(jsonData, null, 2), `task-${index + 1}-${Date.now()}.json`, 'application/json');
+            }
+        }
+
+        // Export selected tasks
+        function exportSelectedTasks(format) {
+            const selectedIndexes = [];
+            document.querySelectorAll('.task-checkbox:checked').forEach(cb => {
+                const index = parseInt(cb.id.split('-')[1]);
+                selectedIndexes.push(index);
+            });
+
+            if (selectedIndexes.length === 0) {
+                alert('Please select at least one task to export!');
+                return;
+            }
+
+            const selectedTasks = selectedIndexes.map(i => savedTasks[i]);
+
+            if (format === 'csv') {
+                let csv = 'RIDE DATA LOGGER - SELECTED TASKS REPORT\n\n';
+                
+                selectedTasks.forEach((task, idx) => {
+                    const taskNum = selectedIndexes[idx] + 1;
+                    csv += `\n========== TASK ${taskNum} ==========\n`;
+                    csv += `Driver,${task.driver}\n`;
+                    csv += `Annotator,${task.annotator}\n`;
+                    csv += `Date,${task.date}\n`;
+                    csv += `Vehicle,${task.vehicle}\n`;
+                    csv += `RSUNo,${task.rsuNo}\n`;
+                    csv += `RSUStartDate,${task.rsuStartDate}\n`;
+                    csv += `DriveId,${task.driveId}\n`;
+                    csv += `Session Start,${task.sessionStart}\n`;
+                    csv += `Session End,${task.sessionEnd}\n`;
+                    csv += `Session Duration,${task.sessionDuration}\n`;
+                    csv += 'Category,Condition,Minutes\n';
+                    
+                    task.conditions.forEach(item => {
+                        csv += `${item.category},${item.condition},${item.time}\n`;
+                    });
+                    
+                    if (task.comment) {
+                        csv += `Comment,${task.comment}\n`;
+                    }
+                    csv += '\n';
+                });
+                
+                downloadFile(csv, `selected-tasks-${Date.now()}.csv`, 'text/csv');
+            } else if (format === 'json') {
+                const jsonData = {
+                    report: "Ride Data Logger - Selected Tasks",
+                    exportDate: new Date().toLocaleString(),
+                    totalTasks: selectedTasks.length,
+                    tasks: selectedTasks.map((task, idx) => ({
+                        taskNumber: selectedIndexes[idx] + 1,
+                        metadata: {
+                            driver: task.driver,
+                            annotator: task.annotator,
+                            date: task.date,
+                            vehicle: task.vehicle,
+                            rsuNo: task.rsuNo,
+                            rsuStartDate: task.rsuStartDate,
+                            driveId: task.driveId
+                        },
+                        session: {
+                            start: task.sessionStart,
+                            end: task.sessionEnd,
+                            duration: task.sessionDuration
+                        },
+                        conditions: task.conditions,
+                        comment: task.comment || ""
+                    }))
+                };
+                
+                downloadFile(JSON.stringify(jsonData, null, 2), `selected-tasks-${Date.now()}.json`, 'application/json');
+            } else if (format === 'email') {
+                let emailBody = 'RIDE DATA LOGGER - SELECTED TASKS REPORT\n\n';
+                emailBody += `Export Date: ${new Date().toLocaleString()}\n`;
+                emailBody += `Total Tasks: ${selectedTasks.length}\n\n`;
+                
+                selectedTasks.forEach((task, idx) => {
+                    const taskNum = selectedIndexes[idx] + 1;
+                    emailBody += `========== TASK ${taskNum} ==========\n`;
+                    emailBody += `Driver: ${task.driver}\n`;
+                    emailBody += `Annotator: ${task.annotator}\n`;
+                    emailBody += `Date: ${task.date}\n`;
+                    emailBody += `Vehicle: ${task.vehicle}\n`;
+                    emailBody += `Duration: ${task.sessionDuration}\n\n`;
+                    emailBody += 'CONDITIONS:\n';
+                    
+                    task.conditions.forEach(item => {
+                        emailBody += `  ${item.category} - ${item.condition}: ${item.time}\n`;
+                    });
+                    
+                    if (task.comment) {
+                        emailBody += `\nComment: ${task.comment}\n`;
+                    }
+                    emailBody += '\n';
+                });
+                
+                const subject = encodeURIComponent(`Ride Data Logger - ${selectedTasks.length} Tasks`);
+                const body = encodeURIComponent(emailBody);
+                window.location.href = `mailto:?subject=${subject}&body=${body}`;
+            }
+        }
+
+        // Export all saved tasks in one CSV
+        function exportAllTasks() {
+            if (savedTasks.length === 0) {
+                alert('No tasks to export!');
+                return;
+            }
+            
+            let csv = 'RIDE DATA LOGGER - ALL TASKS REPORT\n\n';
+            
+            savedTasks.forEach((task, index) => {
+                csv += `\n========== TASK ${index + 1} ==========\n`;
+                csv += `Driver,${task.driver}\n`;
+                csv += `Annotator,${task.annotator}\n`;
+                csv += `Date,${task.date}\n`;
+                csv += `Vehicle,${task.vehicle}\n`;
+                csv += `RSUNo,${task.rsuNo}\n`;
+                csv += `RSUStartDate,${task.rsuStartDate}\n`;
+                csv += `DriveId,${task.driveId}\n`;
+                csv += `Session Start,${task.sessionStart}\n`;
+                csv += `Session End,${task.sessionEnd}\n`;
+                csv += `Session Duration,${task.sessionDuration}\n`;
+                csv += 'Category,Condition,Minutes\n';
+                
+                task.conditions.forEach(item => {
+                    csv += `${item.category},${item.condition},${item.time}\n`;
+                });
+                
+                if (task.comment) {
+                    csv += `Comment,${task.comment}\n`;
+                }
+                csv += '\n';
+            });
+            
+            downloadFile(csv, `all-tasks-${Date.now()}.csv`, 'text/csv');
+        }
+
+        // Reset only session data, keep user info
+        function resetSessionOnly() {
+            // Stop session
+            sessionActive = false;
+            sessionStartTime = null;
+            clearInterval(sessionDurationInterval);
+            document.getElementById('sessionInfo').style.display = 'none';
+            
+            // Reset all conditions and timers
+            document.querySelectorAll('.condition-btn').forEach(btn => {
+                btn.classList.add('inactive');
+            });
+            
+            conditionTimers = {};
+            activeConditions = {};
+            
+            // Reset timer displays
+            document.querySelectorAll('.time-display').forEach(display => {
+                display.textContent = '0:00';
+            });
+            
+            // Clear comment
+            document.getElementById('comment').value = '';
+            
+            // Increment task counter
+            taskCounter++;
+        }
+
+        // Reset everything including user info and saved tasks
+        function resetAll() {
+            if (!confirm('This will delete ALL data including saved tasks. Are you sure?')) {
+                return;
+            }
+            
+            // Reset session
+            resetSessionOnly();
+            
+            // Clear user inputs
+            document.getElementById('driver').value = '';
+            document.getElementById('annotator').value = '';
+            document.getElementById('date').valueAsDate = new Date();
+            document.getElementById('vehicle').value = '';
+            document.getElementById('rsuNo').value = '';
+            document.getElementById('rsuStartDate').value = '';
+            document.getElementById('driveId').value = '';
+            
+            // Clear saved tasks
+            savedTasks = [];
+            taskCounter = 1;
+            saveTasks();
+            updateSavedTasksDisplay();
+            
+            alert('Everything has been reset!');
+        }
+
+        // Add click event to all condition buttons
+        document.querySelectorAll('.condition-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const category = this.dataset.category;
+                const condition = this.dataset.condition;
+                
+                // Start session on first click
+                if (!sessionActive) {
+                    startSession();
+                }
+
+                // Toggle condition
+                if (this.classList.contains('inactive')) {
+                    // Deactivate all other buttons in the same category
+                    document.querySelectorAll(`[data-category="${category}"]`).forEach(b => {
+                        if (!b.classList.contains('inactive')) {
+                            deactivateCondition(b);
+                        }
+                    });
+                    // Activate this button
+                    activateCondition(this);
+                } else {
+                    // Deactivate this button
+                    deactivateCondition(this);
+                }
+            });
+        });
+
+        function startSession() {
+            sessionStartTime = new Date();
+            sessionActive = true;
+            document.getElementById('sessionInfo').style.display = 'block';
+            
+            // Update session duration every second
+            sessionDurationInterval = setInterval(updateSessionDuration, 1000);
+        }
+
+        function updateSessionDuration() {
+            if (!sessionStartTime) return;
+            
+            const now = new Date();
+            const diff = Math.floor((now - sessionStartTime) / 1000);
+            const minutes = Math.floor(diff / 60);
+            const seconds = diff % 60;
+            
+            document.getElementById('sessionDuration').textContent = 
+                `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function activateCondition(btn) {
+            const category = btn.dataset.category;
+            const condition = btn.dataset.condition;
+            
+            btn.classList.remove('inactive');
+            
+            // Start timer for this condition
+            const key = `${category}:${condition}`;
+            if (!conditionTimers[key]) {
+                conditionTimers[key] = {
+                    startTime: null,
+                    totalSeconds: 0
+                };
+            }
+            
+            conditionTimers[key].startTime = new Date();
+            activeConditions[category] = condition;
+        }
+
+        function deactivateCondition(btn) {
+            const category = btn.dataset.category;
+            const condition = btn.dataset.condition;
+            
+            btn.classList.add('inactive');
+            
+            // Stop timer and accumulate time
+            const key = `${category}:${condition}`;
+            if (conditionTimers[key] && conditionTimers[key].startTime) {
+                const now = new Date();
+                const elapsed = Math.floor((now - conditionTimers[key].startTime) / 1000);
+                conditionTimers[key].totalSeconds += elapsed;
+                conditionTimers[key].startTime = null;
+            }
+            
+            if (activeConditions[category] === condition) {
+                delete activeConditions[category];
+            }
+        }
+
+        function resetCategory(category) {
+            document.querySelectorAll(`[data-category="${category}"]`).forEach(btn => {
+                const condition = btn.dataset.condition;
+                const key = `${category}:${condition}`;
+                
+                // Deactivate if active
+                if (!btn.classList.contains('inactive')) {
+                    deactivateCondition(btn);
+                }
+                
+                // Reset timer data
+                if (conditionTimers[key]) {
+                    conditionTimers[key].totalSeconds = 0;
+                    conditionTimers[key].startTime = null;
+                }
+                
+                // Reset display
+                const displayElement = document.querySelector(`[data-timer="${key}"]`);
+                if (displayElement) {
+                    displayElement.textContent = '0:00';
+                }
+            });
+        }
+
+        function stopSession() {
+            // Deactivate all active conditions
+            document.querySelectorAll('.condition-btn').forEach(btn => {
+                if (!btn.classList.contains('inactive')) {
+                    deactivateCondition(btn);
+                }
+            });
+            
+            sessionActive = false;
+            clearInterval(sessionDurationInterval);
+        }
+
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${minutes}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function exportCSV() {
+            const data = prepareExportData(true);
+            if (!data) return;
+            
+            let csv = 'Ride Data Logger Report\n';
+            csv += `Driver,${data.driver}\n`;
+            csv += `Annotator,${data.annotator}\n`;
+            csv += `Date,${data.date}\n`;
+            csv += `Vehicle,${data.vehicle}\n`;
+            csv += `RSUNo,${data.rsuNo}\n`;
+            csv += `RSUStartDate,${data.rsuStartDate}\n`;
+            csv += `DriveId,${data.driveId}\n`;
+            csv += `Session Start,${data.sessionStart}\n`;
+            csv += `Session End,${data.sessionEnd}\n`;
+            csv += `Session Duration,${data.sessionDuration}\n`;
+            csv += 'Category,Condition,Minutes\n';
+            
+            data.conditions.forEach(item => {
+                csv += `${item.category},${item.condition},${item.time}\n`;
+            });
+            
+            if (data.comment) {
+                csv += `Comment,${data.comment}\n`;
+            }
+            
+            downloadFile(csv, `ride-data-logger-${Date.now()}.csv`, 'text/csv');
+        }
+
+        function exportJSON() {
+            const data = prepareExportData(true);
+            if (!data) return;
+            
+            const jsonData = {
+                report: "Ride Data Logger Report",
+                metadata: {
+                    driver: data.driver,
+                    annotator: data.annotator,
+                    date: data.date,
+                    vehicle: data.vehicle,
+                    rsuNo: data.rsuNo,
+                    rsuStartDate: data.rsuStartDate,
+                    driveId: data.driveId
+                },
+                session: {
+                    start: data.sessionStart,
+                    end: data.sessionEnd,
+                    duration: data.sessionDuration
+                },
+                conditions: data.conditions.map(item => ({
+                    category: item.category,
+                    condition: item.condition,
+                    minutes: item.time
+                })),
+                comment: data.comment || ""
+            };
+            
+            const jsonString = JSON.stringify(jsonData, null, 2);
+            downloadFile(jsonString, `ride-data-logger-${Date.now()}.json`, 'application/json');
+        }
+
+        function showDataInTextarea(content, type) {
+            const overlay = document.createElement('div');
+            overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);z-index:9999;padding:20px;overflow:auto;';
+            
+            const container = document.createElement('div');
+            container.style.cssText = 'max-width:800px;margin:0 auto;background:#2a2a2a;padding:20px;border-radius:10px;';
+            
+            const title = document.createElement('h3');
+            title.textContent = `${type} Data - Copy and Save Manually`;
+            title.style.cssText = 'color:#00cc66;margin-bottom:15px;';
+            
+            const textarea = document.createElement('textarea');
+            textarea.value = content;
+            textarea.style.cssText = 'width:100%;height:400px;background:#1a1a1a;color:#fff;border:1px solid #444;padding:10px;font-family:monospace;font-size:12px;';
+            textarea.readOnly = true;
+            
+            const buttonContainer = document.createElement('div');
+            buttonContainer.style.cssText = 'margin-top:15px;display:flex;gap:10px;';
+            
+            const copyBtn = document.createElement('button');
+            copyBtn.textContent = 'Copy to Clipboard';
+            copyBtn.style.cssText = 'padding:10px 20px;background:#00cc66;color:#fff;border:none;border-radius:5px;cursor:pointer;font-weight:bold;';
+            copyBtn.onclick = () => {
+                textarea.select();
+                document.execCommand('copy');
+                alert('Copied to clipboard!');
+            };
+            
+            const closeBtn = document.createElement('button');
+            closeBtn.textContent = 'Close';
+            closeBtn.style.cssText = 'padding:10px 20px;background:#ff3333;color:#fff;border:none;border-radius:5px;cursor:pointer;font-weight:bold;';
+            closeBtn.onclick = () => document.body.removeChild(overlay);
+            
+            buttonContainer.appendChild(copyBtn);
+            buttonContainer.appendChild(closeBtn);
+            container.appendChild(title);
+            container.appendChild(textarea);
+            container.appendChild(buttonContainer);
+            overlay.appendChild(container);
+            document.body.appendChild(overlay);
+            
+            textarea.select();
+        }
+
+        function emailReport() {
+            const data = prepareExportData();
+            if (!data) return;
+            
+            // Build email body
+            let emailBody = 'RIDE DATA LOGGER REPORT\n\n';
+            emailBody += `Driver: ${data.driver}\n`;
+            emailBody += `Annotator: ${data.annotator}\n`;
+            emailBody += `Date: ${data.date}\n`;
+            emailBody += `Vehicle: ${data.vehicle}\n`;
+            emailBody += `RSU No: ${data.rsuNo}\n`;
+            emailBody += `RSU Start Date: ${data.rsuStartDate}\n`;
+            emailBody += `Drive Id: ${data.driveId}\n\n`;
+            emailBody += `Session Start: ${data.sessionStart}\n`;
+            emailBody += `Session End: ${data.sessionEnd}\n`;
+            emailBody += `Session Duration: ${data.sessionDuration}\n\n`;
+            emailBody += 'CONDITIONS:\n';
+            emailBody += '----------------------------------------\n';
+            
+            data.conditions.forEach(item => {
+                emailBody += `${item.category} - ${item.condition}: ${item.time}\n`;
+            });
+            
+            if (data.comment) {
+                emailBody += `\nComment: ${data.comment}\n`;
+            }
+            
+            // Create mailto link
+            const subject = encodeURIComponent(`Ride Data Logger Report - ${data.driver} - ${data.date}`);
+            const body = encodeURIComponent(emailBody);
+            const mailtoLink = `mailto:?subject=${subject}&body=${body}`;
+            
+            window.location.href = mailtoLink;
+        }
+
+        function prepareExportData(shouldStopSession = true) {
+            // Validate required fields
+            const driver = document.getElementById('driver').value;
+            const annotator = document.getElementById('annotator').value;
+            const date = document.getElementById('date').value;
+            const vehicle = document.getElementById('vehicle').value;
+            const rsuNo = document.getElementById('rsuNo').value;
+            const rsuStartDate = document.getElementById('rsuStartDate').value;
+            const driveId = document.getElementById('driveId').value;
+            
+            if (!driver || !annotator || !date || !vehicle || !rsuNo || !rsuStartDate || !driveId) {
+                alert('Please fill in all required fields before exporting!');
+                return null;
+            }
+
+            if (!sessionStartTime) {
+                alert('No session data to export! Start a session by clicking any condition button.');
+                return null;
+            }
+
+            // Stop all active conditions if requested
+            if (shouldStopSession) {
+                document.querySelectorAll('.condition-btn').forEach(btn => {
+                    if (!btn.classList.contains('inactive')) {
+                        deactivateCondition(btn);
+                    }
+                });
+                sessionActive = false;
+                clearInterval(sessionDurationInterval);
+            } else {
+                // Just capture current state without stopping
+                document.querySelectorAll('.condition-btn').forEach(btn => {
+                    if (!btn.classList.contains('inactive')) {
+                        const category = btn.dataset.category;
+                        const condition = btn.dataset.condition;
+                        const key = `${category}:${condition}`;
+                        
+                        if (conditionTimers[key] && conditionTimers[key].startTime) {
+                            const now = new Date();
+                            const elapsed = Math.floor((now - conditionTimers[key].startTime) / 1000);
+                            conditionTimers[key].totalSeconds += elapsed;
+                            conditionTimers[key].startTime = now; // Reset start time to continue
+                        }
+                    }
+                });
+            }
+            
+            const sessionEnd = new Date();
+            const sessionDuration = Math.floor((sessionEnd - sessionStartTime) / 1000);
+            
+            // Collect condition data
+            const conditions = Object.entries(conditionTimers)
+                .filter(([key, data]) => data.totalSeconds > 0)
+                .sort((a, b) => b[1].totalSeconds - a[1].totalSeconds)
+                .map(([key, data]) => {
+                    const [category, condition] = key.split(':');
+                    return {
+                        category: category,
+                        condition: condition,
+                        time: formatTime(data.totalSeconds)
+                    };
+                });
+            
+            const comment = document.getElementById('comment').value;
+            
+            return {
+                driver,
+                annotator,
+                date,
+                vehicle,
+                rsuNo,
+                rsuStartDate,
+                driveId,
+                sessionStart: sessionStartTime.toLocaleString(),
+                sessionEnd: sessionEnd.toLocaleString(),
+                sessionDuration: formatTime(sessionDuration),
+                conditions,
+                comment
+            };
+        }
+
+        // Generic download function
+        function downloadFile(content, filename, mimeType) {
+            const blob = new Blob([content], { type: mimeType });
+            
+            // Try multiple download methods for mobile compatibility
+            if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+                window.navigator.msSaveOrOpenBlob(blob, filename);
+                alert('File exported successfully!');
+            } else {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                a.style.display = 'none';
+                document.body.appendChild(a);
+                a.click();
+                
+                setTimeout(() => {
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                }, 100);
+                
+                setTimeout(() => {
+                    if (confirm('File downloaded! If download failed on mobile, click OK to view the data and copy it manually.')) {
+                        const dataUrl = `data:${mimeType};charset=utf-8,` + encodeURIComponent(content);
+                        const newWindow = window.open(dataUrl, '_blank');
+                        if (!newWindow) {
+                            showDataInTextarea(content, filename.split('.').pop().toUpperCase());
+                        }
+                    }
+                }, 500);
+            }
+        }
+    </script>
+</body>
+</html>
